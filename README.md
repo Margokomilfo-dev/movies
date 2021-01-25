@@ -9,8 +9,6 @@ The used technologies:
 - SASS
 - MaterialUI
 
-link to gh-pages: https://margokomilfo-dev.github.io/movies/
-
 Unfortunately this API works only from http://localhost:3000/   
 
 pic. 1

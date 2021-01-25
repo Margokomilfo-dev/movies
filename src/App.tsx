@@ -23,7 +23,7 @@ function App() {
             .then(res => {
                 if (res.data.Response === 'True') {
                     setSearchResult(res.data.Search)
-                    setSearchName('')
+                    // setSearchName('')
                 } else {
                     setError(res.data.Error)
                 }
@@ -65,7 +65,10 @@ function App() {
                     {error
                         ? <span className={s.err}>{error}</span>
                         : (searchResult.length && !error)
-                            ? searchResult.map(movie => <div>{movie.Title}</div>)
+                            ? searchResult.map((movie, i) =>
+                                <div key={i}>
+                                    <span className={s.ind}>{i+1}.</span>{movie.Title}
+                                </div>)
                             : 'Result will be here!'}
                 </div>
 
