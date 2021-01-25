@@ -1,31 +1,74 @@
-import React, { useState } from 'react'
-import './App.css'
+import React, {ChangeEvent, KeyboardEvent, useState} from 'react'
+import s from './App.module.sass'
 import API from './api'
+import Button from '@material-ui/core/Button/Button'
+import { TextField } from '@material-ui/core'
+
+export type MovieType = {
+    Poster: string
+    Title: string
+    Type: string
+    Year: string
+    imdbID: string
+}
 
 function App() {
-    const [searchName, setSearchName] = useState('');
-    const [serachResult, setSerachResult] = useState('');
+    const [searchName, setSearchName] = useState('')
+    const [searchResult, setSearchResult] = useState<Array<MovieType>> ([])
+    const [error, setError] = useState<string>('')
 
+    console.log(searchResult)
     const searchFilm = () => {
         API.searchFilmsByTitle(searchName)
             .then(res => {
                 if (res.data.Response === 'True') {
-                    setSerachResult(JSON.stringify(res.data.Search))
+                    setSearchResult(res.data.Search)
+                    setSearchName('')
                 } else {
-                    setSerachResult(JSON.stringify(res.data.Error))
+                    setError(res.data.Error)
                 }
             })
-    };
+    }
+
+    const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+        setError('')
+        setSearchResult([])
+        setSearchName(e.currentTarget.value)
+    }
+    const enterDone = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            searchFilm()
+        }
+    }
+
     return (
-        <div>
-            <h1>Promises</h1>
-            <div>
-                <h3><p>Search by name:</p></h3>
-                <input type="text" value={searchName} onChange={(e) => setSearchName(e.currentTarget.value)} />
-                <button onClick={searchFilm}>Search</button>
-                <div>
-                    {serachResult}
+        <div className={s.app}>
+            <h1>Search movies: </h1>
+            <div className={s.container}>
+
+                <div className={s.formEls}>
+                    <h3>by title:</h3>
+                    <div className={s.inp}>
+                        <TextField id="outlined-helperText" label="Movies name" placeholder="name"
+                                   variant="outlined" value={searchName} onChange={onChangeInput}
+                                   onKeyPress={enterDone}
+                        />
+
+                    </div>
+
+                    <Button variant="contained" color="secondary" onClick={searchFilm}>
+                        Search
+                    </Button>
+
                 </div>
+                <div className={s.result}>
+                    {error
+                        ? <span className={s.err}>{error}</span>
+                        : (searchResult.length && !error)
+                            ? searchResult.map(movie => <div>{movie.Title}</div>)
+                            : 'Result will be here!'}
+                </div>
+
             </div>
         </div>
     )
